@@ -2,6 +2,7 @@ package com.ehc.teluguvelugu;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -22,7 +23,7 @@ public class Dictionary extends Activity {
     setContentView(R.layout.activity_main);
 
     Button search = (Button) findViewById(R.id.button1);
-    // Button random = (Button) findViewById(R.id.button2);
+    Button random = (Button) findViewById(R.id.button2);
     final TextView text = (TextView) findViewById(R.id.editText1);
     final TextView result = (TextView) findViewById(R.id.editText2);
     final Context context = getBaseContext();
@@ -31,6 +32,10 @@ public class Dictionary extends Activity {
     Typeface typeFace = Typeface.createFromAsset(assertmanager,
         "Pothana2000.ttf");
     result.setTypeface(typeFace);
+
+    DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite",
+        "com.ehc.teluguvelugu");
+    final SQLiteDatabase database = dbcopy.openDataBase();
 
     // search.setOnClickListener(new OnClickListener() {
     // @Override
@@ -68,40 +73,57 @@ public class Dictionary extends Activity {
       @Override
       public void onClick(View v) {
         String word = text.getText().toString();
-        char array[] = word.toCharArray();
-        array[0] = Character.toUpperCase(word.charAt(0));
-        String changedword = new String(array);
-        Log.d("change word", changedword);
+        if (word.equals("")) {
+          result.setText("Please Enter a word.");
+        } else {
+          char array[] = word.toCharArray();
+          array[0] = Character.toUpperCase(word.charAt(0));
+          String changedword = new String(array);
+          Log.d("change word", changedword);
 
-        try {
-          DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite",
-              "com.ehc.teluguvelugu");
-          SQLiteDatabase database = dbcopy.openDataBase();
-          Cursor cursor = database
-              .rawQuery("Select * from eng2te where eng_word='" + changedword
-                  + "'", null);
+          try {
 
-          if (cursor.moveToFirst()) {
-            Log.d(word, cursor.getString(cursor.getColumnIndex("meaning")));
-            result.setText(cursor.getString(cursor.getColumnIndex("meaning")));
-          } else {
-            result.setText("Sorry, we unable to find word");
+            Cursor cursor = database.rawQuery(
+                "Select * from eng2te where eng_word='" + changedword + "'",
+                null);
+
+            if (cursor.moveToFirst()) {
+              Log.d(word, cursor.getString(cursor.getColumnIndex("meaning")));
+              result.setText(cursor.getString(cursor.getColumnIndex("meaning")));
+            } else {
+              result.setText("Sorry, we unable to find word");
+            }
+
+          } catch (SQLException e) {
+            e.printStackTrace();
           }
-
-        } catch (SQLException e) {
-          e.printStackTrace();
         }
       }
     });
 
-    // random.setOnClickListener(new OnClickListener() {
-    //
-    // @Override
-    // public void onClick(View v) {
-    // startActivity(new Intent(Dictionary.this, RandomActivity.class));
-    //
-    // }
-    // });
+    random.setOnClickListener(new OnClickListener() {
+
+      @Override
+      public void onClick(View v) {
+
+        Cursor cursor = database
+            .rawQuery(
+                "select * from eng2te where rowid = (abs(random()) % (select max(rowid)+1 from eng2te))",
+                null);
+
+        cursor.moveToFirst();
+        Log.d(cursor.getString(cursor.getColumnIndex("eng_word")),
+            cursor.getString(cursor.getColumnIndex("meaning")));
+
+        Intent intent = new Intent(Dictionary.this, RandomActivity.class);
+        intent.putExtra("message",
+            cursor.getString(cursor.getColumnIndex("eng_word")) + " = "
+                + cursor.getString(cursor.getColumnIndex("meaning")));
+
+        startActivity(intent);
+
+      }
+    });
   }
 
   @Override
