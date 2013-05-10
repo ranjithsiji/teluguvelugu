@@ -4,5 +4,6 @@
     <string name="app_name">Telugu Velugu</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="day_word">Word Of The Day</string>
 
 </resources>

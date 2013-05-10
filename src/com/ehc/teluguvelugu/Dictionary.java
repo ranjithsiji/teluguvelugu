@@ -1,12 +1,11 @@
 package com.ehc.teluguvelugu;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,51 +22,90 @@ public class Dictionary extends Activity {
     setContentView(R.layout.activity_main);
 
     Button search = (Button) findViewById(R.id.button1);
+    // Button random = (Button) findViewById(R.id.button2);
     final TextView text = (TextView) findViewById(R.id.editText1);
     final TextView result = (TextView) findViewById(R.id.editText2);
+    final Context context = getBaseContext();
 
     AssetManager assertmanager = getAssets();
     Typeface typeFace = Typeface.createFromAsset(assertmanager,
         "Pothana2000.ttf");
     result.setTypeface(typeFace);
 
+    // search.setOnClickListener(new OnClickListener() {
+    // @Override
+    // public void onClick(View v) {
+    // String word = text.getText().toString();
+    // Log.d("msg", word);
+    //
+    // int flag = 0;
+    //
+    // try {
+    // InputStream is = getAssets().open("result.csv");
+    // BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+    // String line;
+    //
+    // while ((line = reader.readLine()) != null) {
+    // String[] words = line.split(",");
+    //
+    // if (words[0].equalsIgnoreCase(word)) {
+    // flag = 1;
+    // result.setText(words[3]);
+    // Log.d("*******", words[3]);
+    // break;
+    // }
+    // }
+    // } catch (IOException e) {
+    // e.printStackTrace();
+    // }
+    //
+    // if (flag == 0) {
+    // result.setText("sorry, We are unable to find this word");
+    // }
+    // }
+    // });
     search.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         String word = text.getText().toString();
-        Log.d("msg", word);
-
-        int flag = 0;
+        char array[] = word.toCharArray();
+        array[0] = Character.toUpperCase(word.charAt(0));
+        String changedword = new String(array);
+        Log.d("change word", changedword);
 
         try {
-          InputStream is = getAssets().open("result.csv");
-          BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-          String line;
+          DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite",
+              "com.ehc.teluguvelugu");
+          SQLiteDatabase database = dbcopy.openDataBase();
+          Cursor cursor = database
+              .rawQuery("Select * from eng2te where eng_word='" + changedword
+                  + "'", null);
 
-          while ((line = reader.readLine()) != null) {
-            String[] words = line.split(",");
-
-            if (words[0].equalsIgnoreCase(word)) {
-              flag = 1;
-              result.setText(words[3]);
-              Log.d("*******", words[3]);
-              break;
-            }
+          if (cursor.moveToFirst()) {
+            Log.d(word, cursor.getString(cursor.getColumnIndex("meaning")));
+            result.setText(cursor.getString(cursor.getColumnIndex("meaning")));
+          } else {
+            result.setText("Sorry, we unable to find word");
           }
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
 
-        if (flag == 0) {
-          result.setText("sorry, We are unable to find this word");
+        } catch (SQLException e) {
+          e.printStackTrace();
         }
       }
     });
+
+    // random.setOnClickListener(new OnClickListener() {
+    //
+    // @Override
+    // public void onClick(View v) {
+    // startActivity(new Intent(Dictionary.this, RandomActivity.class));
+    //
+    // }
+    // });
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.main, menu);
     return true;
   }

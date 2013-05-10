@@ -21,15 +21,6 @@
         <requestFocus />
     </EditText>
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editText1"
-        android:layout_below="@+id/editText1"
-        android:layout_marginLeft="86dp"
-        android:text="Search" />
-
     <EditText
         android:id="@+id/editText2"
         android:layout_width="match_parent"
@@ -38,5 +29,15 @@
         android:layout_marginTop="114dp"
         android:ems="10"
         android:inputType="textMultiLine" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText1"
+        android:layout_below="@+id/editText1"
+        android:layout_marginLeft="19dp"
+        android:text="Search"
+        />
 
 </RelativeLayout>
