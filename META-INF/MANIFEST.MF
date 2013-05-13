@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: TeluguVelugu
+Bundle-SymbolicName: TeluguVelugu
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: TeluguVelugu.jar,
+ libs/android-sqlite-asset-helper.jar
+Export-Package: com.ehc.teluguvelugu,
+ com.readystatesoftware.sqliteasset

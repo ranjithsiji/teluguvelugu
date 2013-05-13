@@ -6,13 +6,11 @@
     android:gravity="fill"
     android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/editText3"
+    <TextView
+        android:id="@+id/random"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="69dp"
-        android:ems="10" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

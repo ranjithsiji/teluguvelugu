@@ -13,7 +13,7 @@ public class RandomActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_random);
 
-    TextView view = (TextView) findViewById(R.id.editText3);
+    TextView view = (TextView) findViewById(R.id.random);
     AssetManager assertmanager = getAssets();
     Typeface typeFace = Typeface.createFromAsset(assertmanager,
         "Pothana2000.ttf");
