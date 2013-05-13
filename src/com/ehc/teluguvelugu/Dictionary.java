@@ -21,18 +21,15 @@ public class Dictionary extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-
     Button search = (Button) findViewById(R.id.button1);
     Button random = (Button) findViewById(R.id.button2);
     final TextView text = (TextView) findViewById(R.id.editText1);
     final TextView result = (TextView) findViewById(R.id.editText2);
     final Context context = getBaseContext();
-
     AssetManager assertmanager = getAssets();
     Typeface typeFace = Typeface.createFromAsset(assertmanager,
         "Pothana2000.ttf");
     result.setTypeface(typeFace);
-
     DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite",
         "com.ehc.teluguvelugu");
     final SQLiteDatabase database = dbcopy.openDataBase();
