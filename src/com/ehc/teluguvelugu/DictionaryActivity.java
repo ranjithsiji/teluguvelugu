@@ -12,6 +12,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -24,6 +26,7 @@ public class DictionaryActivity extends Activity {
 	public static String word;
 	public static SQLiteDatabase database;
 	public static Typeface typeFace;
+	public TextView result;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,14 +35,15 @@ public class DictionaryActivity extends Activity {
 		Button search = (Button) findViewById(R.id.search);
 		Button random = (Button) findViewById(R.id.random);
 		final SearchView searchview = (SearchView) findViewById(R.id.searchView1);
-		final TextView result = (TextView) findViewById(R.id.meaning);
+		result = (TextView) findViewById(R.id.meaning);
 		final Context context = getBaseContext();
 		AssetManager assetmanager = getAssets();
 		typeFace = Typeface.createFromAsset(assetmanager, "Pothana2000.ttf");
 		result.setTypeface(typeFace);
 		DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite", "com.ehc.teluguvelugu");
 		database = dbcopy.openDataBase();
-		result.setText("Word Of The Day:\n" + getWordOfDay());
+		// result.setText("Word Of The Day:\n" + getWordOfDay());
+		showWordOfDay();
 
 		// Giving Functionality to Search Button
 		search.setOnClickListener(new OnClickListener() {
@@ -115,16 +119,62 @@ public class DictionaryActivity extends Activity {
 	}
 
 	// Getting Word Of The Day
-	public String getWordOfDay() {
+	public void showWordOfDay() {
 		day = date.getDate() + "";
 		Log.d("dateeeeeeeeeeeeeeeeeeeeeeee", day);
 		SharedPreferences sharedPreference = getSharedPreferences("WORDOFDAY", 0);
+		result.setText("Word Of The Day:\n");
 		String word_day = sharedPreference.getString(day, "");
 		if (word_day.equals("")) {
 			word = getRandomWord();
-			return word;
+			result.setText(word);
 		} else {
-			return word_day;
+			result.setText(word_day);
 		}
 	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.actionmenu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		switch (item.getItemId()) {
+		case R.id.home:
+			showWordOfDay();
+			break;
+		case R.id.favourites:
+			showFavourites();
+			break;
+		case R.id.aboutus:
+			showAboutUs();
+			break;
+		case R.id.recent:
+			showRecent();
+			break;
+		}
+
+		return true;
+	}
+
+	private void showRecent() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void showFavourites() {
+
+	}
+
+	private void showAboutUs() {
+
+		String aboutus = "1).We are a personalized technology consulting firm specialized in building large scale web & mobile applications using cutting edge technologies.\n2).Helping clients build better software systems is the core of our business.Let us help you realize the next big idea.";
+		result.setText(aboutus);
+
+	}
+
 }
