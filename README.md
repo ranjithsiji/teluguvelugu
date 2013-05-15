@@ -9,7 +9,7 @@ Raw data from [English To Telugu Dictionary](http://sourceforge.net/projects/tel
 
 Maintainers
 -----------
-[Prembabu Panchadar](http://github.com/preym), The Egghead Creative
+[Prembabu Panchadara](http://github.com/preym), The Egghead Creative
 
 [Chandana Jakkamsetti](http://github.com/greesh), The Egghead Creative
 

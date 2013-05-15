@@ -16,7 +16,7 @@ public class SplashActivity extends Activity {
     new Handler().postDelayed(new Runnable() {
       @Override
       public void run() {
-        startActivity(new Intent(SplashActivity.this, Dictionary.class));
+        startActivity(new Intent(SplashActivity.this, DictionaryActivity.class));
         finish();
       }
     }, secondsDelayed * 2000);

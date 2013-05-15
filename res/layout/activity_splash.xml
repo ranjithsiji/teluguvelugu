@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/textView1"
-        android:layout_width="313dp"
+        android:layout_width="match_parent"
         android:layout_height="249dp"
         android:layout_gravity="center"
         android:background="@drawable/eggheadcreative"
