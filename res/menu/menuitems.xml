@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+   
+        <item
+        android:id="@+id/home"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom"
+        android:title="Home"/>
+    
+    <item
+        android:id="@+id/favourites"
+         android:orderInCategory="2"
+        android:showAsAction="never"
+        android:title="Favourites"/>
+        
+        <item
+        android:id="@+id/recent"
+         android:orderInCategory="3"
+        android:showAsAction="never"
+        android:title="Recent"/>
+        
+        <item
+        android:id="@+id/aboutus"
+         android:orderInCategory="4"
+        android:showAsAction="never"
+        android:title="AboutUs"/>
+        
+        
+   
+    
+
+</menu>

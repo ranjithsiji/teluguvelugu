@@ -1,6 +1,9 @@
 package com.ehc.teluguvelugu;
 
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import android.app.Activity;
 import android.content.Context;
@@ -27,6 +30,9 @@ public class DictionaryActivity extends Activity {
 	public static SQLiteDatabase database;
 	public static Typeface typeFace;
 	public TextView result;
+	public SharedPreferences recentWords;
+	public Set recent;
+	private Object recentlyViewedWords;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +60,17 @@ public class DictionaryActivity extends Activity {
 					result.setText("Please Enter a word.");
 				} else {
 					word = inputConversion(word);
+					recentWords = getSharedPreferences("recent", 0);
+					recent = recentWords.getStringSet("recentValues", new LinkedHashSet<String>());
+					recent.add(word);
+					SharedPreferences.Editor recentEditor = recentWords.edit();
+					recentEditor.putStringSet("recentValues", recent);
+					recentEditor.commit();
 					String meaning = getMeaning(word);
 					result.setText(meaning);
 				}
 			}
+
 		});
 		// Giving Functionality to Random Button
 		random.setOnClickListener(new OnClickListener() {
@@ -73,10 +86,10 @@ public class DictionaryActivity extends Activity {
 	protected void onStop() {
 		super.onStop();
 		SharedPreferences sharedPreference = getSharedPreferences("WORDOFDAY", 0);
-		SharedPreferences.Editor editor = sharedPreference.edit();// storing the
-		// value
+		SharedPreferences.Editor editor = sharedPreference.edit();
 		editor.putString(day, word);
 		editor.commit();
+
 	}
 
 	// Converting given input according to Database Format
@@ -123,20 +136,33 @@ public class DictionaryActivity extends Activity {
 		day = date.getDate() + "";
 		Log.d("dateeeeeeeeeeeeeeeeeeeeeeee", day);
 		SharedPreferences sharedPreference = getSharedPreferences("WORDOFDAY", 0);
-		result.setText("Word Of The Day:\n");
 		String word_day = sharedPreference.getString(day, "");
 		if (word_day.equals("")) {
 			word = getRandomWord();
-			result.setText(word);
+			result.setText("Word Of The Day:\n" + word);
 		} else {
-			result.setText(word_day);
+			result.setText("Word Of The Day:\n" + word_day);
 		}
+	}
+
+	// Test method to log all the recent words searched
+	private void recentWord() {
+		recentWords = getSharedPreferences("recent", 0);
+		recent = recentWords.getStringSet("recentValues", null);
+		Iterator<String> setIterator = recent.iterator();
+		String recentlyViewedWords = "";
+		while (setIterator.hasNext()) {
+			String s = setIterator.next();
+			Log.d("values", s + recent.size());
+			recentlyViewedWords = recentlyViewedWords + "\n" + s;
+		}
+		result.setText("Recently searched Words:\n" + recentlyViewedWords);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.actionmenu, menu);
+		getMenuInflater().inflate(R.menu.menuitems, menu);
 		return true;
 	}
 
@@ -162,8 +188,7 @@ public class DictionaryActivity extends Activity {
 	}
 
 	private void showRecent() {
-		// TODO Auto-generated method stub
-
+		recentWord();
 	}
 
 	private void showFavourites() {
