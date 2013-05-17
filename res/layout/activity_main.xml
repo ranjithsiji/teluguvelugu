@@ -41,4 +41,14 @@
         android:text="Search"
         android:textSize="10sp" />
 
+    <ImageButton
+        android:id="@+id/favourite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/meaning"
+        android:layout_below="@+id/meaning"
+        android:layout_marginTop="84dp"
+        android:scrollbars="vertical"
+        android:src="@android:drawable/btn_star" />
+
 </RelativeLayout>

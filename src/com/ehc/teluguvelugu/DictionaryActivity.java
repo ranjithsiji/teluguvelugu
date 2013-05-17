@@ -18,12 +18,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-public class DictionaryActivity extends Activity {
+public class DictionaryActivity extends Activity implements View.OnClickListener {
 	public static Date date = new Date();
 	public static String day;
 	public static String word;
@@ -31,17 +31,25 @@ public class DictionaryActivity extends Activity {
 	public static Typeface typeFace;
 	public TextView result;
 	public SharedPreferences recentWords;
+	public SharedPreferences favouriteWords;
+	public Set favourite;
 	public Set recent;
 	private Object recentlyViewedWords;
 	public String meaning;
 	public String randomword;
+	public Button search;
+	public SearchView searchview;
+	public ImageButton favourites;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		Button search = (Button) findViewById(R.id.search);
-		final SearchView searchview = (SearchView) findViewById(R.id.searchView1);
+		search = (Button) findViewById(R.id.search);
+		search.setOnClickListener(this);
+		favourites = (ImageButton) findViewById(R.id.favourite);
+		favourites.setOnClickListener(this);
+		searchview = (SearchView) findViewById(R.id.searchView1);
 		result = (TextView) findViewById(R.id.meaning);
 		final Context context = getBaseContext();
 		AssetManager assetmanager = getAssets();
@@ -50,29 +58,39 @@ public class DictionaryActivity extends Activity {
 		DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite", "com.ehc.teluguvelugu");
 		database = dbcopy.openDataBase();
 		showWordOfDay();
+	}
 
-		// Giving Functionality to Search Button
-		search.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				word = searchview.getQuery().toString();
-				if (word.equals("")) {
-					result.setText("Please Enter a word.");
-				} else {
-					word = inputConversion(word);
-					meaning = getMeaning(word);
-					if (!meaning.equals("Sorry, we unable to find word")) {
-						recentWords = getSharedPreferences("recent", 0);
-						recent = recentWords.getStringSet("recentValues", new LinkedHashSet<String>());
-						recent.add(word);
-						SharedPreferences.Editor recentEditor = recentWords.edit();
-						recentEditor.putStringSet("recentValues", recent);
-						recentEditor.commit();
-					}
-					result.setText(meaning);
+	// Giving Functionality to Search Button
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.search:
+			word = searchview.getQuery().toString();
+			if (word.equals("")) {
+				result.setText("Please Enter a word.");
+			} else {
+				word = inputConversion(word);
+				meaning = getMeaning(word);
+				if (!meaning.equals("Sorry, we unable to find word")) {
+					recentWords = getSharedPreferences("recent", 0);
+					recent = recentWords.getStringSet("recentValues", new LinkedHashSet<String>());
+					recent.add(word);
+					SharedPreferences.Editor recentEditor = recentWords.edit();
+					recentEditor.putStringSet("recentValues", recent);
+					recentEditor.commit();
 				}
+				result.setText(meaning);
 			}
-		});
+			break;
+		case R.id.favourite:
+			favouriteWords = getSharedPreferences("favourites", 0);
+			favourite = favouriteWords.getStringSet("favourites", new LinkedHashSet<String>());
+			favourite.add(word);
+			SharedPreferences.Editor favouriteEditor = favouriteWords.edit();
+			favouriteEditor.putStringSet("favourites", favourite);
+			favouriteEditor.commit();
+			break;
+		}
 	}
 
 	@Override
@@ -188,7 +206,16 @@ public class DictionaryActivity extends Activity {
 	}
 
 	private void showFavourites() {
-
+		favouriteWords = getSharedPreferences("favourites", 0);
+		favourite = favouriteWords.getStringSet("favourites", null);
+		Iterator<String> favouriteIterator = favourite.iterator();
+		String viewFavouriteWords = "";
+		while (favouriteIterator.hasNext()) {
+			String s = favouriteIterator.next();
+			Log.d("values", s + favourite.size());
+			viewFavouriteWords = viewFavouriteWords + "\n" + s + "=" + getMeaning(s);
+		}
+		result.setText("Favourites :\n" + viewFavouriteWords);
 	}
 
 	private void showAboutUs() {
