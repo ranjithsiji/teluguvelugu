@@ -6,22 +6,28 @@
         android:orderInCategory="1"
         android:showAsAction="ifRoom"
         android:title="Home"/>
+        
+        <item
+        android:id="@+id/random"
+         android:orderInCategory="2"
+        android:showAsAction="ifRoom"
+        android:title="Random"/>
     
     <item
         android:id="@+id/favourites"
-         android:orderInCategory="2"
+         android:orderInCategory="3"
         android:showAsAction="never"
         android:title="Favourites"/>
         
         <item
         android:id="@+id/recent"
-         android:orderInCategory="3"
+         android:orderInCategory="4"
         android:showAsAction="never"
         android:title="Recent"/>
         
         <item
         android:id="@+id/aboutus"
-         android:orderInCategory="4"
+         android:orderInCategory="5"
         android:showAsAction="never"
         android:title="AboutUs"/>
         

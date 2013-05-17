@@ -33,13 +33,14 @@ public class DictionaryActivity extends Activity {
 	public SharedPreferences recentWords;
 	public Set recent;
 	private Object recentlyViewedWords;
+	public String meaning;
+	public String randomword;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		Button search = (Button) findViewById(R.id.search);
-		Button random = (Button) findViewById(R.id.random);
 		final SearchView searchview = (SearchView) findViewById(R.id.searchView1);
 		result = (TextView) findViewById(R.id.meaning);
 		final Context context = getBaseContext();
@@ -48,36 +49,28 @@ public class DictionaryActivity extends Activity {
 		result.setTypeface(typeFace);
 		DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite", "com.ehc.teluguvelugu");
 		database = dbcopy.openDataBase();
-		// result.setText("Word Of The Day:\n" + getWordOfDay());
 		showWordOfDay();
 
 		// Giving Functionality to Search Button
 		search.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String word = searchview.getQuery().toString();
+				word = searchview.getQuery().toString();
 				if (word.equals("")) {
 					result.setText("Please Enter a word.");
 				} else {
 					word = inputConversion(word);
-					recentWords = getSharedPreferences("recent", 0);
-					recent = recentWords.getStringSet("recentValues", new LinkedHashSet<String>());
-					recent.add(word);
-					SharedPreferences.Editor recentEditor = recentWords.edit();
-					recentEditor.putStringSet("recentValues", recent);
-					recentEditor.commit();
-					String meaning = getMeaning(word);
+					meaning = getMeaning(word);
+					if (!meaning.equals("Sorry, we unable to find word")) {
+						recentWords = getSharedPreferences("recent", 0);
+						recent = recentWords.getStringSet("recentValues", new LinkedHashSet<String>());
+						recent.add(word);
+						SharedPreferences.Editor recentEditor = recentWords.edit();
+						recentEditor.putStringSet("recentValues", recent);
+						recentEditor.commit();
+					}
 					result.setText(meaning);
 				}
-			}
-
-		});
-		// Giving Functionality to Random Button
-		random.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				String randomword = getRandomWord();
-				result.setText("Random Word:\n" + randomword);
 			}
 		});
 	}
@@ -154,14 +147,13 @@ public class DictionaryActivity extends Activity {
 		while (setIterator.hasNext()) {
 			String s = setIterator.next();
 			Log.d("values", s + recent.size());
-			recentlyViewedWords = recentlyViewedWords + "\n" + s;
+			recentlyViewedWords = recentlyViewedWords + "\n" + s + "=" + getMeaning(s);
 		}
 		result.setText("Recently searched Words:\n" + recentlyViewedWords);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.menuitems, menu);
 		return true;
 	}
@@ -181,6 +173,10 @@ public class DictionaryActivity extends Activity {
 			break;
 		case R.id.recent:
 			showRecent();
+			break;
+		case R.id.random:
+			randomword = getRandomWord();
+			result.setText("Random Word:\n" + randomword);
 			break;
 		}
 
