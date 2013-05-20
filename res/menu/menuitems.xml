@@ -5,7 +5,10 @@
         android:id="@+id/home"
         android:orderInCategory="1"
         android:showAsAction="ifRoom"
-        android:title="Home"/>
+        android:textStyle="italic"
+        android:title="Home"
+        android:typeface="sans"/>
+
     <item
         android:id="@+id/random"
         android:orderInCategory="2"
@@ -14,17 +17,17 @@
     <item
         android:id="@+id/favourites"
         android:orderInCategory="3"
-        android:showAsAction="ifRoom"
+        android:showAsAction="never"
         android:title="Favourites"/>
     <item
         android:id="@+id/recent"
         android:orderInCategory="4"
-        android:showAsAction="ifRoom"
+        android:showAsAction="never"
         android:title="Recent"/>
     <item
         android:id="@+id/aboutus"
         android:orderInCategory="5"
-        android:showAsAction="ifRoom"
+        android:showAsAction="never"
         android:title="AboutUs"/>
 
 </menu>

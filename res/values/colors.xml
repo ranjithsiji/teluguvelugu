@@ -11,5 +11,6 @@
     <color name="sysRed">#FFFF0000</color>
     <color name="sysTransparent">#00000000</color>
     <color name="sysWhite">#FFFFFFFF</color>
-    <color name="sysYellow">#FFFFFF00</color>   
+    <color name="sysYellow">#FFFFFF00</color> 
+    <color name="ehcbody">#fdfdfd</color>  
 </resources>

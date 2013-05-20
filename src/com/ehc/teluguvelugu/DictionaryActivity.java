@@ -61,6 +61,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		search = (Button) findViewById(R.id.search);
 		search.setOnClickListener(this);
 		favourites = (ImageButton) findViewById(R.id.favourite);
+		favourites.setVisibility(View.INVISIBLE);
 		favourites.setOnClickListener(this);
 		// searchview = (SearchView) findViewById(R.id.searchView1);
 		result = (TextView) findViewById(R.id.meaning);
@@ -74,6 +75,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		searchview = (AutoCompleteTextView) findViewById(R.id.searchView1);
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, matchingWordList);
 		searchview.setAdapter(adapter);
+		searchview.setThreshold(3);
 		searchview.setHint("English Word");
 		// giving functionality for autocomplete
 		searchview.addTextChangedListener(new TextWatcher() {
@@ -87,11 +89,14 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				String word = searchview.getText().toString();
+
+				Log.d("ssssssssss", s.toString());
+
+				word = searchview.getText().toString();
 				if (!word.equals("")) {
 					Log.d("arrayLiStttttttt", matchingWordList.toString());
-					word = inputConversion(word);
-					Cursor data = database.rawQuery("Select * from eng2te where eng_word like'" + word + "%" + "'", null);
+					String words = inputConversion(word);
+					Cursor data = database.rawQuery("Select * from eng2te where eng_word like'" + words + "%" + "'", null);
 					if (data.moveToFirst()) {
 						do {
 							matchingWordList.add(data.getString(data.getColumnIndex("eng_word")));
@@ -100,6 +105,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 				} else {
 					matchingWordList.removeAll(matchingWordList);
 				}
+
 			}
 		});
 	}
@@ -122,8 +128,11 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 					SharedPreferences.Editor recentEditor = recentWords.edit();
 					recentEditor.putStringSet("recentValues", recent);
 					recentEditor.commit();
+					favourites.setVisibility(View.VISIBLE);
 				}
+
 				result.setText(meaning);
+
 			}
 			break;
 		case R.id.favourite:
@@ -189,6 +198,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 
 	// Getting Word Of The Day
 	public void showWordOfDay() {
+		favourites.setVisibility(View.INVISIBLE);
 		day = date.getDate() + "";
 		Log.d("dateeeeeeeeeeeeeeeeeeeeeeee", day);
 		SharedPreferences sharedPreference = getSharedPreferences("WORDOFDAY", 0);
@@ -203,6 +213,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 
 	// Test method to log all the recent words searched
 	private void recentWord() {
+		favourites.setVisibility(View.INVISIBLE);
 		recentWords = getSharedPreferences("recent", 0);
 		recent = recentWords.getStringSet("recentValues", null);
 		Iterator<String> setIterator = recent.iterator();
@@ -219,6 +230,8 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menuitems, menu);
 		setMenuBackground();
+		// final SearchView sv = new SearchView(getActivity());
+		// sv.setOnQueryTextListener(this);
 		return true;
 	}
 

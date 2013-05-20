@@ -13,34 +13,16 @@
         android:id="@+id/searchView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/search"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/search"
+        android:autoText="true"
+        android:background="@color/sysGray"
+        android:inputType="text|textAutoComplete|textAutoCorrect"
         android:orientation="vertical"
-        android:textAlignment="viewStart" 
-        android:background="@color/sysGray" >
-
+        android:textAlignment="viewStart" >
     </AutoCompleteTextView>
-
-    <TextView
-        android:id="@+id/meaning"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_alignLeft="@+id/searchView1"
-        android:layout_below="@+id/searchView1"
-        android:layout_marginTop="19dp" />
-
-    <Button
-        android:id="@+id/search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/meaning"
-        android:layout_alignParentRight="true"
-        android:minHeight="30dp"
-        android:minWidth="20dp"
-        android:text="Search"
-        android:textSize="10sp" />
 
     <ImageButton
         android:id="@+id/favourite"
@@ -51,5 +33,32 @@
         android:layout_marginTop="84dp"
         android:scrollbars="vertical"
         android:src="@android:drawable/btn_star" />
+
+    <TextView
+        android:id="@+id/meaning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/searchView1"
+        android:layout_below="@+id/searchView1"
+        android:layout_marginTop="55dp"
+        android:gravity="center"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.5"
+        android:textColor="#93c572"
+        android:textSize="30px"
+        android:textStyle="italic"
+        android:typeface="sans" />
+
+    <Button
+        android:id="@+id/search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="@color/sysGray"
+        android:minHeight="30dp"
+        android:minWidth="20dp"
+        android:text="Search"
+        android:textSize="10sp" />
 
 </RelativeLayout>
