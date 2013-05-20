@@ -7,18 +7,18 @@ import android.os.Handler;
 
 public class SplashActivity extends Activity {
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_splash);
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_splash);
 
-    int secondsDelayed = 1;
-    new Handler().postDelayed(new Runnable() {
-      @Override
-      public void run() {
-        startActivity(new Intent(SplashActivity.this, DictionaryActivity.class));
-        finish();
-      }
-    }, secondsDelayed * 2000);
-  }
+		int secondsDelayed = 1;
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				startActivity(new Intent(SplashActivity.this, DictionaryActivity.class));
+				finish();
+			}
+		}, secondsDelayed * 3000);
+	}
 }

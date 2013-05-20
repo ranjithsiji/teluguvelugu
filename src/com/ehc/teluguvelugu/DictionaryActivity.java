@@ -1,10 +1,12 @@
 package com.ehc.teluguvelugu;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,15 +14,24 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.InflateException;
+import android.view.LayoutInflater;
+import android.view.LayoutInflater.Factory;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 public class DictionaryActivity extends Activity implements View.OnClickListener {
@@ -38,8 +49,10 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	public String meaning;
 	public String randomword;
 	public Button search;
-	public SearchView searchview;
+	public AutoCompleteTextView searchview;
 	public ImageButton favourites;
+	public ArrayList<String> matchingWordList = new ArrayList<String>();
+	public ArrayAdapter<String> adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +62,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		search.setOnClickListener(this);
 		favourites = (ImageButton) findViewById(R.id.favourite);
 		favourites.setOnClickListener(this);
-		searchview = (SearchView) findViewById(R.id.searchView1);
+		// searchview = (SearchView) findViewById(R.id.searchView1);
 		result = (TextView) findViewById(R.id.meaning);
 		final Context context = getBaseContext();
 		AssetManager assetmanager = getAssets();
@@ -58,6 +71,37 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite", "com.ehc.teluguvelugu");
 		database = dbcopy.openDataBase();
 		showWordOfDay();
+		searchview = (AutoCompleteTextView) findViewById(R.id.searchView1);
+		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, matchingWordList);
+		searchview.setAdapter(adapter);
+		searchview.setHint("English Word");
+		// giving functionality for autocomplete
+		searchview.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				String word = searchview.getText().toString();
+				if (!word.equals("")) {
+					Log.d("arrayLiStttttttt", matchingWordList.toString());
+					word = inputConversion(word);
+					Cursor data = database.rawQuery("Select * from eng2te where eng_word like'" + word + "%" + "'", null);
+					if (data.moveToFirst()) {
+						do {
+							matchingWordList.add(data.getString(data.getColumnIndex("eng_word")));
+						} while (data.moveToNext());
+					}
+				} else {
+					matchingWordList.removeAll(matchingWordList);
+				}
+			}
+		});
 	}
 
 	// Giving Functionality to Search Button
@@ -65,7 +109,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.search:
-			word = searchview.getQuery().toString();
+			word = searchview.getText().toString();
 			if (word.equals("")) {
 				result.setText("Please Enter a word.");
 			} else {
@@ -83,12 +127,14 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 			}
 			break;
 		case R.id.favourite:
-			favouriteWords = getSharedPreferences("favourites", 0);
-			favourite = favouriteWords.getStringSet("favourites", new LinkedHashSet<String>());
-			favourite.add(word);
-			SharedPreferences.Editor favouriteEditor = favouriteWords.edit();
-			favouriteEditor.putStringSet("favourites", favourite);
-			favouriteEditor.commit();
+			if (!meaning.equals("Sorry, we unable to find word")) {
+				favouriteWords = getSharedPreferences("favourites", 0);
+				favourite = favouriteWords.getStringSet("favourites", new LinkedHashSet<String>());
+				favourite.add(word);
+				SharedPreferences.Editor favouriteEditor = favouriteWords.edit();
+				favouriteEditor.putStringSet("favourites", favourite);
+				favouriteEditor.commit();
+			}
 			break;
 		}
 	}
@@ -100,7 +146,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		SharedPreferences.Editor editor = sharedPreference.edit();
 		editor.putString(day, word);
 		editor.commit();
-
 	}
 
 	// Converting given input according to Database Format
@@ -173,7 +218,44 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menuitems, menu);
+		setMenuBackground();
 		return true;
+	}
+
+	@SuppressLint("ResourceAsColor")
+	protected void setMenuBackground() {
+		getLayoutInflater().setFactory(new Factory() {
+			@Override
+			public View onCreateView(String name, Context context, AttributeSet attrs) {
+				if (name.equalsIgnoreCase("com.android.internal.view.menu.IconMenuItemView")) {
+					try {
+						LayoutInflater f = getLayoutInflater();
+						final View view = f.createView(name, null, attrs);
+						/*
+						 * The background gets refreshed each time a new item is added the
+						 * options menu. So each time Android applies the default background
+						 * we need to set our own background. This is done using a thread
+						 * giving the background change as runnable object
+						 */
+						new Handler().post(new Runnable() {
+							@Override
+							public void run() {
+								// sets the background color
+								view.setBackgroundColor(R.color.sysGreen);
+								// sets the text color
+								((TextView) view).setTextColor(Color.BLACK);
+								// sets the text size
+								((TextView) view).setTextSize(18);
+							}
+						});
+						return view;
+					} catch (InflateException e) {
+					} catch (ClassNotFoundException e) {
+					}
+				}
+				return null;
+			}
+		});
 	}
 
 	@Override
@@ -197,7 +279,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 			result.setText("Random Word:\n" + randomword);
 			break;
 		}
-
 		return true;
 	}
 
@@ -219,10 +300,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	}
 
 	private void showAboutUs() {
-
 		String aboutus = "1).We are a personalized technology consulting firm specialized in building large scale web & mobile applications using cutting edge technologies.\n2).Helping clients build better software systems is the core of our business.Let us help you realize the next big idea.";
 		result.setText(aboutus);
-
 	}
-
 }
