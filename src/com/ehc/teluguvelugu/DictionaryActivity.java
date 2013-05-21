@@ -1,6 +1,7 @@
 package com.ehc.teluguvelugu;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -57,6 +58,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	public ArrayList<String> matchingWordList = new ArrayList<String>();
 	public ArrayAdapter<String> adapter;
 	public TextView viewwordoftheday;
+	public AssetManager assetmanager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +73,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		favourites.setOnClickListener(this);
 		result = (TextView) findViewById(R.id.meaning);
 		final Context context = getBaseContext();
-		AssetManager assetmanager = getAssets();
+		assetmanager = getAssets();
 		typeFacePothana = Typeface.createFromAsset(assetmanager, "Pothana2000.ttf");
 		typeFaceOpenSans = Typeface.createFromAsset(assetmanager, "OpenSans_Semibold.ttf");
 		result.setTypeface(typeFacePothana);
@@ -134,6 +136,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 						do {
 							matchingWordList.add(data.getString(data.getColumnIndex("eng_word")));
 						} while (data.moveToNext());
+						Collections.sort(matchingWordList);
 					}
 				} else {
 					matchingWordList.removeAll(matchingWordList);
@@ -366,7 +369,8 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		search.setVisibility(View.INVISIBLE);
 		searchview.setVisibility(View.INVISIBLE);
 		viewwordoftheday.setText("About Us");
-		String aboutus = "We are a personalized technology consulting firm specialized in building large scale web & mobile applications using cutting edge technologies.\nHelping clients build better software systems is the core of our business.Let us help you realize the next big idea.";
+		String aboutus = "We are a personalized technology consulting firm specialized in building large scale web & mobile applications using cutting edge technologies.\n \n Helping clients build better software systems is the core of our business.Let us help you realize the next big idea.";
 		result.setText(aboutus);
+
 	}
 }

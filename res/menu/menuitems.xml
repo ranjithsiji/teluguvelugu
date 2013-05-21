@@ -17,17 +17,17 @@
     <item
         android:id="@+id/favourites"
         android:orderInCategory="3"
-        android:showAsAction="never"
+        android:showAsAction="ifRoom"
         android:title="Favourites"/>
     <item
         android:id="@+id/recent"
         android:orderInCategory="4"
-        android:showAsAction="never"
+        android:showAsAction="ifRoom"
         android:title="Recent"/>
     <item
         android:id="@+id/aboutus"
         android:orderInCategory="5"
-        android:showAsAction="never"
+        android:showAsAction="ifRoom"
         android:title="AboutUs"/>
 
 </menu>
