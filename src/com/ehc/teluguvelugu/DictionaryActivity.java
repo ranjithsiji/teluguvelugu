@@ -39,7 +39,8 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	public static String day;
 	public static String word;
 	public static SQLiteDatabase database;
-	public static Typeface typeFace;
+	public static Typeface typeFacePothana;
+	public static Typeface typeFaceDroidSans;
 	public TextView result;
 	public SharedPreferences recentWords;
 	public SharedPreferences favouriteWords;
@@ -53,6 +54,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	public ImageButton favourites;
 	public ArrayList<String> matchingWordList = new ArrayList<String>();
 	public ArrayAdapter<String> adapter;
+	public TextView viewwordoftheday;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,21 +63,24 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		search = (Button) findViewById(R.id.search);
 		search.setOnClickListener(this);
 		favourites = (ImageButton) findViewById(R.id.favourite);
+		viewwordoftheday = (TextView) findViewById(R.id.wordoftheday);
+		viewwordoftheday.setText("Word OF The Day");
+		viewwordoftheday.setVisibility(View.VISIBLE);
 		favourites.setVisibility(View.INVISIBLE);
 		favourites.setOnClickListener(this);
-		// searchview = (SearchView) findViewById(R.id.searchView1);
 		result = (TextView) findViewById(R.id.meaning);
 		final Context context = getBaseContext();
 		AssetManager assetmanager = getAssets();
-		typeFace = Typeface.createFromAsset(assetmanager, "Pothana2000.ttf");
-		result.setTypeface(typeFace);
+		typeFacePothana = Typeface.createFromAsset(assetmanager, "Pothana2000.ttf");
+		typeFaceDroidSans = Typeface.createFromAsset(assetmanager, "DroidSansMono.ttf");
+		result.setTypeface(typeFacePothana);
+		viewwordoftheday.setTypeface(typeFaceDroidSans);
 		DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite", "com.ehc.teluguvelugu");
 		database = dbcopy.openDataBase();
 		showWordOfDay();
 		searchview = (AutoCompleteTextView) findViewById(R.id.searchView1);
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, matchingWordList);
 		searchview.setAdapter(adapter);
-		searchview.setThreshold(3);
 		searchview.setHint("English Word");
 		// giving functionality for autocomplete
 		searchview.addTextChangedListener(new TextWatcher() {
@@ -89,9 +94,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-
 				Log.d("ssssssssss", s.toString());
-
 				word = searchview.getText().toString();
 				if (!word.equals("")) {
 					Log.d("arrayLiStttttttt", matchingWordList.toString());
@@ -105,7 +108,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 				} else {
 					matchingWordList.removeAll(matchingWordList);
 				}
-
 			}
 		});
 	}
@@ -129,10 +131,9 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 					recentEditor.putStringSet("recentValues", recent);
 					recentEditor.commit();
 					favourites.setVisibility(View.VISIBLE);
+					viewwordoftheday.setVisibility(View.INVISIBLE);
 				}
-
 				result.setText(meaning);
-
 			}
 			break;
 		case R.id.favourite:
@@ -198,6 +199,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 
 	// Getting Word Of The Day
 	public void showWordOfDay() {
+		viewwordoftheday.setVisibility(View.VISIBLE);
 		favourites.setVisibility(View.INVISIBLE);
 		day = date.getDate() + "";
 		Log.d("dateeeeeeeeeeeeeeeeeeeeeeee", day);
@@ -205,14 +207,15 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		String word_day = sharedPreference.getString(day, "");
 		if (word_day.equals("")) {
 			word = getRandomWord();
-			result.setText("Word Of The Day:\n" + word);
+			result.setText(word);
 		} else {
-			result.setText("Word Of The Day:\n" + word_day);
+			result.setText(word_day);
 		}
 	}
 
 	// Test method to log all the recent words searched
 	private void recentWord() {
+		viewwordoftheday.setVisibility(View.INVISIBLE);
 		favourites.setVisibility(View.INVISIBLE);
 		recentWords = getSharedPreferences("recent", 0);
 		recent = recentWords.getStringSet("recentValues", null);
@@ -289,6 +292,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 			break;
 		case R.id.random:
 			randomword = getRandomWord();
+			viewwordoftheday.setVisibility(View.INVISIBLE);
 			result.setText("Random Word:\n" + randomword);
 			break;
 		}
@@ -300,6 +304,8 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	}
 
 	private void showFavourites() {
+		viewwordoftheday.setVisibility(View.INVISIBLE);
+		favourites.setVisibility(View.INVISIBLE);
 		favouriteWords = getSharedPreferences("favourites", 0);
 		favourite = favouriteWords.getStringSet("favourites", null);
 		Iterator<String> favouriteIterator = favourite.iterator();

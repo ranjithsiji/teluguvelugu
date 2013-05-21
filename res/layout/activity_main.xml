@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="clip_horizontal"
+    android:gravity="fill_horizontal"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -24,32 +24,6 @@
         android:textAlignment="viewStart" >
     </AutoCompleteTextView>
 
-    <ImageButton
-        android:id="@+id/favourite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/meaning"
-        android:layout_below="@+id/meaning"
-        android:layout_marginTop="84dp"
-        android:scrollbars="vertical"
-        android:src="@android:drawable/btn_star" />
-
-    <TextView
-        android:id="@+id/meaning"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/searchView1"
-        android:layout_below="@+id/searchView1"
-        android:layout_marginTop="55dp"
-        android:gravity="center"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="1.5"
-        android:textColor="#93c572"
-        android:textSize="30px"
-        android:textStyle="italic"
-        android:typeface="sans" />
-
     <Button
         android:id="@+id/search"
         android:layout_width="wrap_content"
@@ -60,5 +34,42 @@
         android:minWidth="20dp"
         android:text="Search"
         android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/wordoftheday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/searchView1"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/searchView1"
+        android:layout_marginTop="26dp"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/meaning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/wordoftheday"
+        android:layout_below="@+id/wordoftheday"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.5"
+        android:textColor="#93c572"
+        android:textSize="30px"
+        android:textStyle="italic"
+        android:typeface="sans" />
+
+    <ImageButton
+        android:id="@+id/favourite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:scrollbars="vertical"
+        android:src="@android:drawable/btn_star" />
 
 </RelativeLayout>

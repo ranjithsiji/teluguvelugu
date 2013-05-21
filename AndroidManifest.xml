@@ -13,8 +13,8 @@
     <application
         android:allowBackup="true"
         android:background="@color/ehcbody"
-        android:icon="@drawable/eggheadcreative"
-        android:theme="@android:style/Theme.DeviceDefault.Wallpaper.NoTitleBar"
+        android:icon="@drawable/favicon"
+        android:theme="@android:style/Theme.DeviceDefault"
         android:uiOptions="splitActionBarWhenNarrow" >
        
         <activity
