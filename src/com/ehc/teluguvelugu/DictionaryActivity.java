@@ -40,7 +40,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	public static String word;
 	public static SQLiteDatabase database;
 	public static Typeface typeFacePothana;
-	public static Typeface typeFaceDroidSans;
+	public static Typeface typeFaceOpenSans;
 	public TextView result;
 	public SharedPreferences recentWords;
 	public SharedPreferences favouriteWords;
@@ -62,26 +62,39 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		setContentView(R.layout.activity_main);
 		search = (Button) findViewById(R.id.search);
 		search.setOnClickListener(this);
+
 		favourites = (ImageButton) findViewById(R.id.favourite);
 		viewwordoftheday = (TextView) findViewById(R.id.wordoftheday);
-		viewwordoftheday.setText("Word OF The Day");
-		viewwordoftheday.setVisibility(View.VISIBLE);
 		favourites.setVisibility(View.INVISIBLE);
 		favourites.setOnClickListener(this);
 		result = (TextView) findViewById(R.id.meaning);
 		final Context context = getBaseContext();
 		AssetManager assetmanager = getAssets();
 		typeFacePothana = Typeface.createFromAsset(assetmanager, "Pothana2000.ttf");
-		typeFaceDroidSans = Typeface.createFromAsset(assetmanager, "DroidSansMono.ttf");
+		typeFaceOpenSans = Typeface.createFromAsset(assetmanager, "OpenSans_Semibold.ttf");
 		result.setTypeface(typeFacePothana);
-		viewwordoftheday.setTypeface(typeFaceDroidSans);
+		viewwordoftheday.setTypeface(typeFaceOpenSans);
 		DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite", "com.ehc.teluguvelugu");
 		database = dbcopy.openDataBase();
-		showWordOfDay();
 		searchview = (AutoCompleteTextView) findViewById(R.id.searchView1);
+		// searchview.setOnEditorActionListener(new
+		// TextView.OnEditorActionListener() {
+		// @Override
+		// public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		// if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+		//
+		//
+		// result.setText("prem");
+		// return true;
+		// }
+		// return false;
+		// }
+		// });
+
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, matchingWordList);
 		searchview.setAdapter(adapter);
 		searchview.setHint("English Word");
+		showWordOfDay();
 		// giving functionality for autocomplete
 		searchview.addTextChangedListener(new TextWatcher() {
 			@Override
@@ -199,7 +212,10 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 
 	// Getting Word Of The Day
 	public void showWordOfDay() {
+		search.setVisibility(View.VISIBLE);
+		searchview.setVisibility(View.VISIBLE);
 		viewwordoftheday.setVisibility(View.VISIBLE);
+		viewwordoftheday.setText("Word OF The Day");
 		favourites.setVisibility(View.INVISIBLE);
 		day = date.getDate() + "";
 		Log.d("dateeeeeeeeeeeeeeeeeeeeeeee", day);
@@ -207,6 +223,9 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		String word_day = sharedPreference.getString(day, "");
 		if (word_day.equals("")) {
 			word = getRandomWord();
+			SharedPreferences.Editor editor = sharedPreference.edit();
+			editor.putString(day, word);
+			editor.commit();
 			result.setText(word);
 		} else {
 			result.setText(word_day);
@@ -215,7 +234,8 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 
 	// Test method to log all the recent words searched
 	private void recentWord() {
-		viewwordoftheday.setVisibility(View.INVISIBLE);
+		viewwordoftheday.setVisibility(View.VISIBLE);
+		viewwordoftheday.setText("Recently Searched Words");
 		favourites.setVisibility(View.INVISIBLE);
 		recentWords = getSharedPreferences("recent", 0);
 		recent = recentWords.getStringSet("recentValues", null);
@@ -226,15 +246,13 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 			Log.d("values", s + recent.size());
 			recentlyViewedWords = recentlyViewedWords + "\n" + s + "=" + getMeaning(s);
 		}
-		result.setText("Recently searched Words:\n" + recentlyViewedWords);
+		result.setText(recentlyViewedWords);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menuitems, menu);
 		setMenuBackground();
-		// final SearchView sv = new SearchView(getActivity());
-		// sv.setOnQueryTextListener(this);
 		return true;
 	}
 
@@ -292,19 +310,28 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 			break;
 		case R.id.random:
 			randomword = getRandomWord();
-			viewwordoftheday.setVisibility(View.INVISIBLE);
-			result.setText("Random Word:\n" + randomword);
+			search.setVisibility(View.VISIBLE);
+			searchview.setVisibility(View.VISIBLE);
+			favourites.setVisibility(View.INVISIBLE);
+			viewwordoftheday.setVisibility(View.VISIBLE);
+			viewwordoftheday.setText("Random Word");
+			result.setText(randomword);
 			break;
 		}
 		return true;
 	}
 
 	private void showRecent() {
+		search.setVisibility(View.VISIBLE);
+		searchview.setVisibility(View.VISIBLE);
 		recentWord();
 	}
 
 	private void showFavourites() {
-		viewwordoftheday.setVisibility(View.INVISIBLE);
+		search.setVisibility(View.VISIBLE);
+		searchview.setVisibility(View.VISIBLE);
+		viewwordoftheday.setVisibility(View.VISIBLE);
+		viewwordoftheday.setText("Your Favourites");
 		favourites.setVisibility(View.INVISIBLE);
 		favouriteWords = getSharedPreferences("favourites", 0);
 		favourite = favouriteWords.getStringSet("favourites", null);
@@ -315,11 +342,14 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 			Log.d("values", s + favourite.size());
 			viewFavouriteWords = viewFavouriteWords + "\n" + s + "=" + getMeaning(s);
 		}
-		result.setText("Favourites :\n" + viewFavouriteWords);
+		result.setText(viewFavouriteWords);
 	}
 
 	private void showAboutUs() {
-		String aboutus = "1).We are a personalized technology consulting firm specialized in building large scale web & mobile applications using cutting edge technologies.\n2).Helping clients build better software systems is the core of our business.Let us help you realize the next big idea.";
+		search.setVisibility(View.INVISIBLE);
+		searchview.setVisibility(View.INVISIBLE);
+		viewwordoftheday.setText("About Us");
+		String aboutus = "We are a personalized technology consulting firm specialized in building large scale web & mobile applications using cutting edge technologies.\nHelping clients build better software systems is the core of our business.Let us help you realize the next big idea.";
 		result.setText(aboutus);
 	}
 }

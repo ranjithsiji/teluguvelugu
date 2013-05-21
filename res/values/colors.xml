@@ -13,5 +13,8 @@
     <color name="sysWhite">#FFFFFFFF</color>
     <color name="sysYellow">#FFFFFF00</color> 
     <color name="ehcbody">#fdfdfd</color>
-    <color name="ehclogobg">#363636</color>  
+    <color name="ehclogobg">#363636</color> 
+    <color name="ehcgreen">#81b600</color> 
+    <color name="ehcboldtext">#464646</color>
+ 
 </resources>
