@@ -23,11 +23,13 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.InflateException;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.LayoutInflater.Factory;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -77,24 +79,39 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite", "com.ehc.teluguvelugu");
 		database = dbcopy.openDataBase();
 		searchview = (AutoCompleteTextView) findViewById(R.id.searchView1);
-		// searchview.setOnEditorActionListener(new
-		// TextView.OnEditorActionListener() {
-		// @Override
-		// public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-		// if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-		//
-		//
-		// result.setText("prem");
-		// return true;
-		// }
-		// return false;
-		// }
-		// });
+		showWordOfDay();
+		searchview.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+					word = searchview.getText().toString();
+					if (word.equals("")) {
+						result.setText("Please Enter a word.");
+					} else {
+						word = inputConversion(word);
+						meaning = getMeaning(word);
+						if (!meaning.equals("Sorry, we unable to find word")) {
+							recentWords = getSharedPreferences("recent", 0);
+							recent = recentWords.getStringSet("recentValues", new LinkedHashSet<String>());
+							recent.add(word);
+							SharedPreferences.Editor recentEditor = recentWords.edit();
+							recentEditor.putStringSet("recentValues", recent);
+							recentEditor.commit();
+							favourites.setVisibility(View.VISIBLE);
+							viewwordoftheday.setVisibility(View.INVISIBLE);
+						}
+						result.setText(meaning);
+					}
+
+					return true;
+				}
+				return false;
+			}
+		});
 
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, matchingWordList);
 		searchview.setAdapter(adapter);
 		searchview.setHint("English Word");
-		showWordOfDay();
 		// giving functionality for autocomplete
 		searchview.addTextChangedListener(new TextWatcher() {
 			@Override
