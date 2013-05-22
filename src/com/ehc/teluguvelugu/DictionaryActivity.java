@@ -33,7 +33,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -52,36 +51,52 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	private Object recentlyViewedWords;
 	public String meaning;
 	public String randomword;
-	public Button search;
 	public AutoCompleteTextView searchview;
 	public ImageButton favourites;
 	public ArrayList<String> matchingWordList = new ArrayList<String>();
 	public ArrayAdapter<String> adapter;
 	public TextView viewwordoftheday;
 	public AssetManager assetmanager;
+	public Context context;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		search = (Button) findViewById(R.id.search);
-		search.setOnClickListener(this);
+		getWidgets();
 
-		favourites = (ImageButton) findViewById(R.id.favourite);
-		viewwordoftheday = (TextView) findViewById(R.id.wordoftheday);
-		favourites.setVisibility(View.INVISIBLE);
-		favourites.setOnClickListener(this);
-		result = (TextView) findViewById(R.id.meaning);
-		final Context context = getBaseContext();
-		assetmanager = getAssets();
-		typeFacePothana = Typeface.createFromAsset(assetmanager, "Pothana2000.ttf");
-		typeFaceOpenSans = Typeface.createFromAsset(assetmanager, "OpenSans_Semibold.ttf");
-		result.setTypeface(typeFacePothana);
-		viewwordoftheday.setTypeface(typeFaceOpenSans);
-		DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite", "com.ehc.teluguvelugu");
-		database = dbcopy.openDataBase();
-		searchview = (AutoCompleteTextView) findViewById(R.id.searchView1);
 		showWordOfDay();
+		enableDeviceSearchButton();
+
+		// giving functionality for autocomplete
+		searchview.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable s) {
+				viewwordoftheday.setVisibility(View.INVISIBLE);
+				word = searchview.getText().toString();
+				if (!word.equals("")) {
+					favourites.setVisibility(View.VISIBLE);
+					word = inputConversion(word);
+					meaning = getMeaning(word);
+					if (!meaning.equals("Sorry, we unable to find word"))
+						result.setText(word + "\n" + "= " + meaning);
+				}
+
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+			}
+		});
+	}
+
+	private void enableDeviceSearchButton() {
+		// TODO Auto-generated method stub
 		searchview.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -102,7 +117,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 							favourites.setVisibility(View.VISIBLE);
 							viewwordoftheday.setVisibility(View.INVISIBLE);
 						}
-						result.setText(meaning);
+						result.setText(word + "\n" + "= " + meaning);
 					}
 
 					return true;
@@ -111,64 +126,13 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 			}
 		});
 
-		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, matchingWordList);
-		searchview.setAdapter(adapter);
-		searchview.setHint("English Word");
-		// giving functionality for autocomplete
-		searchview.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void afterTextChanged(Editable s) {
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				Log.d("ssssssssss", s.toString());
-				word = searchview.getText().toString();
-				if (!word.equals("")) {
-					Log.d("arrayLiStttttttt", matchingWordList.toString());
-					String words = inputConversion(word);
-					Cursor data = database.rawQuery("Select * from eng2te where eng_word like'" + words + "%" + "'", null);
-					if (data.moveToFirst()) {
-						do {
-							matchingWordList.add(data.getString(data.getColumnIndex("eng_word")));
-						} while (data.moveToNext());
-						Collections.sort(matchingWordList);
-					}
-				} else {
-					matchingWordList.removeAll(matchingWordList);
-				}
-			}
-		});
 	}
 
 	// Giving Functionality to Search Button
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.search:
-			word = searchview.getText().toString();
-			if (word.equals("")) {
-				result.setText("Please Enter a word.");
-			} else {
-				word = inputConversion(word);
-				meaning = getMeaning(word);
-				if (!meaning.equals("Sorry, we unable to find word")) {
-					recentWords = getSharedPreferences("recent", 0);
-					recent = recentWords.getStringSet("recentValues", new LinkedHashSet<String>());
-					recent.add(word);
-					SharedPreferences.Editor recentEditor = recentWords.edit();
-					recentEditor.putStringSet("recentValues", recent);
-					recentEditor.commit();
-					favourites.setVisibility(View.VISIBLE);
-					viewwordoftheday.setVisibility(View.INVISIBLE);
-				}
-				result.setText(meaning);
-			}
-			break;
+
 		case R.id.favourite:
 			if (!meaning.equals("Sorry, we unable to find word")) {
 				favouriteWords = getSharedPreferences("favourites", 0);
@@ -232,7 +196,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 
 	// Getting Word Of The Day
 	public void showWordOfDay() {
-		search.setVisibility(View.VISIBLE);
 		searchview.setVisibility(View.VISIBLE);
 		viewwordoftheday.setVisibility(View.VISIBLE);
 		viewwordoftheday.setText("Word OF The Day");
@@ -330,7 +293,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 			break;
 		case R.id.random:
 			randomword = getRandomWord();
-			search.setVisibility(View.VISIBLE);
 			searchview.setVisibility(View.VISIBLE);
 			favourites.setVisibility(View.INVISIBLE);
 			viewwordoftheday.setVisibility(View.VISIBLE);
@@ -342,13 +304,11 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	}
 
 	private void showRecent() {
-		search.setVisibility(View.VISIBLE);
 		searchview.setVisibility(View.VISIBLE);
 		recentWord();
 	}
 
 	private void showFavourites() {
-		search.setVisibility(View.VISIBLE);
 		searchview.setVisibility(View.VISIBLE);
 		viewwordoftheday.setVisibility(View.VISIBLE);
 		viewwordoftheday.setText("Your Favourites");
@@ -366,11 +326,47 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	}
 
 	private void showAboutUs() {
-		search.setVisibility(View.INVISIBLE);
 		searchview.setVisibility(View.INVISIBLE);
 		viewwordoftheday.setText("About Us");
 		String aboutus = "We are a personalized technology consulting firm specialized in building large scale web & mobile applications using cutting edge technologies.\n \n Helping clients build better software systems is the core of our business.Let us help you realize the next big idea.";
 		result.setText(aboutus);
+
+	}
+
+	public void getWidgets() {
+
+		favourites = (ImageButton) findViewById(R.id.favourite);
+		viewwordoftheday = (TextView) findViewById(R.id.wordoftheday);
+		favourites.setVisibility(View.INVISIBLE);
+		favourites.setOnClickListener(this);
+		result = (TextView) findViewById(R.id.meaning);
+		context = getBaseContext();
+		assetmanager = getAssets();
+		typeFacePothana = Typeface.createFromAsset(assetmanager, "Pothana2000.ttf");
+		typeFaceOpenSans = Typeface.createFromAsset(assetmanager, "OpenSans_Semibold.ttf");
+		result.setTypeface(typeFacePothana);
+		viewwordoftheday.setTypeface(typeFaceOpenSans);
+		DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite", "com.ehc.teluguvelugu");
+		database = dbcopy.openDataBase();
+		searchview = (AutoCompleteTextView) findViewById(R.id.searchView1);
+		setMatchingWords();
+
+		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, matchingWordList);
+		searchview.setAdapter(adapter);
+		searchview.setPadding(10, 0, 0, 0);
+		searchview.setThreshold(1);
+		searchview.setHint("English Word");
+
+	}
+
+	public void setMatchingWords() {
+		Cursor data = database.rawQuery("Select * from eng2te", null);
+		if (data.moveToFirst()) {
+			do {
+				matchingWordList.add(data.getString(data.getColumnIndex("eng_word")));
+			} while (data.moveToNext());
+			Collections.sort(matchingWordList);
+		}
 
 	}
 }
