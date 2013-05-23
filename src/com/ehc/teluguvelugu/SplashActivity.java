@@ -12,13 +12,14 @@ public class SplashActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash);
 
-		int secondsDelayed = 1;
+		int delay = 3000;
+
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
 				startActivity(new Intent(SplashActivity.this, DictionaryActivity.class));
 				finish();
 			}
-		}, secondsDelayed * 3000);
+		}, delay);
 	}
 }

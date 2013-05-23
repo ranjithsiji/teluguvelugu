@@ -16,5 +16,6 @@
     <color name="ehclogobg">#333</color> 
     <color name="ehcgreen">#81b600</color> 
     <color name="ehcboldtext">#464646</color>
- 
+    <color name="ehcsearchview">#555</color>
+    <color name="ehcwod">#a69d86</color>
 </resources>
