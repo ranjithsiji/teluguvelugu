@@ -17,7 +17,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
-public class DataBaseCopy extends SQLiteOpenHelper {
+public class DataBaseHelper extends SQLiteOpenHelper {
 	private static String database_n;// database name
 	private static String database_p;// database path
 	private static final int DATABASE_VERSION = 3;
@@ -27,7 +27,7 @@ public class DataBaseCopy extends SQLiteOpenHelper {
 
 	// DB_NAME is name of database which is in assets folder
 	// path is our package name
-	public DataBaseCopy(Context context, String DB_NAME, String PATH) {
+	public DataBaseHelper(Context context, String DB_NAME, String PATH) {
 		super(context, DB_NAME, null, DATABASE_VERSION);
 		DatabaseName = DB_NAME;
 		database_p = "/data/data/" + PATH + "/databases/";

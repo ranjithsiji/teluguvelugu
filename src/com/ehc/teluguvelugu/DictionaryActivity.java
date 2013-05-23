@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -52,6 +51,14 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	public AssetManager assetmanager;
 	public Context context;
 
+	public Dictionary dictionary;
+
+	public DictionaryActivity() {
+		DataBaseHelper helper = new DataBaseHelper(context, "dictionary.sqlite", "com.ehc.teluguvelugu");
+		database = helper.openDataBase();
+		dictionary = new Dictionary(database);
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,14 +73,17 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 			public void afterTextChanged(Editable s) {
 				pageTitleComponent.setVisibility(View.INVISIBLE);
 				meaningOfWordComponent.setText("");
-				query = searchview.getText().toString();
+				String query = searchview.getText().toString();
+
 				if (!query.equals("")) {
 					favouriteButton.setVisibility(View.VISIBLE);
-					query = titleize(query);
-					meaning = getMeaning(query);
-					if (!meaning.equals("Sorry, we unable to find word")) {
+
+					meaning = dictionary.getMeaning(query);
+
+					if (meaning != null) {
 						renderWord(query, meaning);
-						storeRecentWord();
+						SharedPreferences storedRecents = getStoredPreferences("recent");
+						dictionary.storeRecentWord(storedRecents, query);
 					}
 				}
 
@@ -97,13 +107,14 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 					query = searchview.getText().toString();
+
 					if (query.equals("")) {
-						meaningOfWordComponent.setText("Please Enter a query.");
+						meaningOfWordComponent.setText("Please Enter A Word");
 					} else {
-						storeRecentWord();
+						SharedPreferences storedRecents = getSharedPreferences("recent", 0);
+						dictionary.storeRecentWord(storedRecents, query);
 					}
 					renderWord(query, meaning);
-
 					return true;
 				}
 				return false;
@@ -117,30 +128,19 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	public void onClick(View mainView) {
 		switch (mainView.getId()) {
 		case R.id.favourite:
-			storeFavouriteWord();
+			storeFavouriteWord(searchview.getText().toString());
 			break;
 		}
 	}
 
-	public void storeRecentWord() {
-		query = titleize(query);
-		meaning = getMeaning(query);
-		if (!meaning.equals("Sorry, we unable to find word")) {
-			recentQueries = getSharedPreferences("recent", 0);
-			Set recents = recentQueries.getStringSet("recentValues", new LinkedHashSet<String>());
-			recents.add(query);
-			SharedPreferences.Editor recentEditor = recentQueries.edit();
-			recentEditor.putStringSet("recentValues", recents);
-			recentEditor.commit();
-			favouriteButton.setVisibility(View.VISIBLE);
-			pageTitleComponent.setVisibility(View.INVISIBLE);
-		}
+	public SharedPreferences getStoredPreferences(String key) {
+		return getSharedPreferences(key, 0);
 	}
 
-	public void storeFavouriteWord() {
-		storedFavourites = getSharedPreferences("favourites", 0);
+	public void storeFavouriteWord(String word) {
+		storedFavourites = getStoredPreferences("favourites");
 		favourites = storedFavourites.getStringSet("favourites", new LinkedHashSet<String>());
-		favourites.add(query);
+		favourites.add(word);
 
 		SharedPreferences.Editor favouriteEditor = storedFavourites.edit();
 		favouriteEditor.putStringSet("favourites", favourites);
@@ -150,51 +150,18 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 	}
 
 	// Converting given input according to Database Format
-	public String titleize(String word) {
-		char array[] = word.toCharArray();
-		array[0] = Character.toUpperCase(word.charAt(0));
-
-		for (int i = 1; i < array.length; i++) {
-			array[i] = Character.toLowerCase(word.charAt(i));
-		}
-
-		String newWord = new String(array);
-		Log.d("Modified Word", newWord);
-		return newWord;
-	}
-
-	// Generating Random query from Database
-	public String getRandomWord() {
-		Cursor records = database.rawQuery(
-				"select * from eng2te where rowid = (abs(random()) % (select max(rowid)+1 from eng2te))", null);
-		records.moveToFirst();
-		int word_index = records.getColumnIndex("eng_word");
-		String word = records.getString(word_index);
-
-		return word;
-	}
-
-	// Getting Meaning for Input query
-	public String getMeaning(String query) {
-		try {
-			Cursor meaningOfWordComponentQuery = database.rawQuery("Select * from eng2te where eng_word='" + query + "'",
-					null);
-			boolean recordsExist = meaningOfWordComponentQuery.moveToFirst();
-
-			if (recordsExist) {
-				int index = meaningOfWordComponentQuery.getColumnIndex("meaning");
-				String meaning = meaningOfWordComponentQuery.getString(index);
-				Log.d(query, meaning);
-				return meaning;
-			} else {
-				return "Sorry, we unable to find word";
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+	// public String titleize(String word) {
+	// char array[] = word.toCharArray();
+	// array[0] = Character.toUpperCase(word.charAt(0));
+	//
+	// for (int i = 1; i < array.length; i++) {
+	// array[i] = Character.toLowerCase(word.charAt(i));
+	// }
+	//
+	// String newWord = new String(array);
+	// Log.d("Modified Word", newWord);
+	// return newWord;
+	// }
 
 	// Getting query Of The Day
 	public void showWordOfTheDay() {
@@ -207,17 +174,17 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		today = date.getDate() + "";
 		Log.d("Todays Date", today);
 
-		SharedPreferences sharedPreference = getSharedPreferences("WORDOFDAY", 0);
-		String wordOfTheDay = sharedPreference.getString(today, "");
+		SharedPreferences storedWordOfTheDay = getStoredPreferences("WORDOFDAY");
+		String wordOfTheDay = storedWordOfTheDay.getString(today, "");
 
 		if (wordOfTheDay.equals("")) {
-			randomWord = getRandomWord();
-			SharedPreferences.Editor editor = sharedPreference.edit();
+			randomWord = dictionary.getRandomWord();
+			SharedPreferences.Editor editor = storedWordOfTheDay.edit();
 			editor.putString(today, randomWord);
 			editor.commit();
-			meaningOfWordComponent.setText(randomWord + "\n\n" + getMeaning(randomWord));
+			meaningOfWordComponent.setText(randomWord + "\n\n" + dictionary.getMeaning(randomWord));
 		} else {
-			meaningOfWordComponent.setText(wordOfTheDay + "\n\n" + getMeaning(wordOfTheDay));
+			meaningOfWordComponent.setText(wordOfTheDay + "\n\n" + dictionary.getMeaning(wordOfTheDay));
 		}
 	}
 
@@ -259,12 +226,13 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 
 	private void showRandom() {
 		wordComponent.setVisibility(View.INVISIBLE);
-		randomWord = getRandomWord();
+		randomWord = dictionary.getRandomWord();
 		searchview.setVisibility(View.VISIBLE);
 		favouriteButton.setVisibility(View.INVISIBLE);
 		pageTitleComponent.setVisibility(View.VISIBLE);
 		pageTitleComponent.setText("Random Word");
-		meaningOfWordComponent.setText(randomWord + "\n\n" + getMeaning(randomWord));
+		searchview.clearComposingText();
+		meaningOfWordComponent.setText(randomWord + "\n\n" + dictionary.getMeaning(randomWord));
 	}
 
 	private void showRecents() {
@@ -275,6 +243,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		searchview.setVisibility(View.VISIBLE);
 		wordComponent.setVisibility(View.INVISIBLE);
 		meaningOfWordComponent.setText("");
+		searchview.clearComposingText();
 
 		Set recents = getRecentWords();
 
@@ -285,7 +254,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 			while (recentWords.hasNext()) {
 				String nextWord = recentWords.next();
 				Log.d("values", nextWord + recents.size());
-				String word = nextWord + "\n" + getMeaning(nextWord) + "\n\n";
+				String word = nextWord + "\n" + dictionary.getMeaning(nextWord) + "\n\n";
 				meaningOfWordComponent.append(word);
 			}
 		} else {
@@ -299,7 +268,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		meaningOfWordComponent.setVisibility(View.VISIBLE);
 		pageTitleComponent.setText("Your Favourites");
 		favouriteButton.setVisibility(View.INVISIBLE);
-		storedFavourites = getSharedPreferences("favourites", 0);
+		storedFavourites = getStoredPreferences("favourites");
 		favourites = storedFavourites.getStringSet("favourites", null);
 		wordComponent.setVisibility(View.INVISIBLE);
 
@@ -310,7 +279,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 			while (favouriteIterator.hasNext()) {
 				String favouriteWord = favouriteIterator.next();
 				Log.d("values", favouriteWord + favourites.size());
-				viewFavouriteWords = viewFavouriteWords + "\n\n" + favouriteWord + "\n" + getMeaning(favouriteWord);
+				viewFavouriteWords = viewFavouriteWords + "\n\n" + favouriteWord + "\n" + dictionary.getMeaning(favouriteWord);
 			}
 			meaningOfWordComponent.setText(viewFavouriteWords);
 		} else {
@@ -344,9 +313,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 		meaningOfWordComponent.setTypeface(typeFacePothana);
 		pageTitleComponent.setTypeface(typeFaceOpenSans);
 
-		DataBaseCopy dbcopy = new DataBaseCopy(context, "dictionary.sqlite", "com.ehc.teluguvelugu");
-
-		database = dbcopy.openDataBase();
 		searchview = (AutoCompleteTextView) findViewById(R.id.searchView1);
 
 		// searchview
