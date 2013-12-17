@@ -7,3 +7,13 @@ Bundle-ClassPath: TeluguVelugu.jar,
  libs/android-sqlite-asset-helper.jar
 Export-Package: com.ehc.teluguvelugu,
  com.readystatesoftware.sqliteasset
+Import-Package: android.view,
+ android.app,
+ android.content,
+ android.widget,
+ android.database.sqlite,
+ android.graphics,
+ android.os,
+ android.text,
+ android.util,
+ android.database

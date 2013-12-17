@@ -14,7 +14,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static String databasePath;
     private static final int DATABASE_VERSION = 3;
     private SQLiteDatabase dataBase;
-    private final Context dbContext;
+    private static Context dbContext;
 
     public DataBaseHelper(Context context, String DB_NAME, String PATH) {
         super(context, DB_NAME, null, DATABASE_VERSION);
@@ -77,4 +77,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
+
+
 }
