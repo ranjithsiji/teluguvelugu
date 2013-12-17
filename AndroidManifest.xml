@@ -14,7 +14,7 @@
             android:allowBackup="true"
             android:background="@color/ehcbody"
             android:icon="@drawable/favicon"
-            android:theme="@android:style/Theme.DeviceDefault"
+            android:theme="@android:style/Theme.Holo.Light"
             android:uiOptions="splitActionBarWhenNarrow">
 
         <activity
