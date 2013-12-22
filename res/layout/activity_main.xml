@@ -2,16 +2,15 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="8dp"
-                android:background="@color/sysTransparent">
+                android:background="@android:color/holo_blue_light">
     <TextView
             android:id="@+id/page_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/word"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="16dp"
             android:fontFamily="OpenSans"
             android:gravity="center"
+            android:layout_marginTop="8dp"
             android:textColor="@color/sysBlack"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -21,42 +20,34 @@
             android:id="@+id/meaning"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/page_title"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="30dp"
-            android:layout_marginTop="16dp"
-            android:fitsSystemWindows="true"
-            android:gravity="fill_horizontal"
+            android:layout_marginTop="80dp"
             android:maxLines="25"
+            android:padding="8dp"
             android:scrollbarAlwaysDrawVerticalTrack="true"
             android:scrollbarStyle="insideOverlay"
             android:scrollbars="vertical"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="1.5"
             android:textColor="@color/sysBlack"
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="normal"
-            android:typeface="sans"/>
+            android:typeface="sans"
+            android:layout_below="@+id/favourite" android:layout_alignRight="@+id/favourite"/>
 
     <ImageButton
             android:id="@+id/favourite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignRight="@+id/page_title"
-            android:layout_marginTop="113dp"
+            android:layout_marginTop="72dp"
             android:scrollbars="vertical"
-            android:src="@android:drawable/btn_star"/>
+            android:padding="8dp"
+            android:src="@android:drawable/btn_star" android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"/>
 
     <TextView
             android:id="@+id/word"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/meaning"
-            android:layout_alignLeft="@+id/page_title"
-            android:layout_alignTop="@+id/favourite"
-            android:layout_toLeftOf="@+id/favourite"/>
+            android:padding="8dp"
+            android:layout_below="@+id/favourite" android:layout_alignParentLeft="true"/>
 
 
 </RelativeLayout>

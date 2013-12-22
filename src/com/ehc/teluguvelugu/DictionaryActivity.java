@@ -10,6 +10,7 @@ import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -100,6 +101,9 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
                 | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             public boolean onQueryTextChange(String newText) {
+                if (newText != null && newText.length() == 2) {
+//                    mSearchView.setSuggestionsAdapter(getCursorAdapter(newText));
+                }
                 return false;
             }
 
@@ -126,6 +130,22 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
             }
 
         });
+    }
+
+    private CursorAdapter getCursorAdapter(String text) {
+
+        CursorAdapter cursorAdapter = new CursorAdapter(getApplicationContext(), dictionary.dictionaryData(text)) {
+            @Override
+            public View newView(Context context, Cursor cursor, ViewGroup parent) {
+                return null;
+            }
+
+            @Override
+            public void bindView(View view, Context context, Cursor cursor) {
+
+            }
+        };
+        return cursorAdapter;
     }
 
     @Override
