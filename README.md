@@ -1,7 +1,7 @@
 Telugu Velugu
 =============
 
-English To Telugu Dictionary
+Telugu Velugu is a free English to Telugu dictionary for Android, with built in features like word lookup, favourites, history, word of the day, unicode support, random word etc. If you are an avid Telugu Reader, this is a must have app.
 
 Credits
 --------
@@ -15,5 +15,4 @@ Maintainers
 
 License
 ---------
-
 Copyright (c) 2008-2013 The Egghead Creative. This software is licensed under the MIT License.
