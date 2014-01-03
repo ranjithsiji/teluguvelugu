@@ -13,4 +13,4 @@ Raw data from [English To Telugu Dictionary](http://sourceforge.net/projects/tel
 
 ### License
 
-Copyright (c) 2008-2013 The Egghead Creative. This software is licensed under the MIT License.
+Copyright (c) 2013-2016 The Egghead Creative. This software is licensed under the MIT License.
