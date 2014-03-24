@@ -32,10 +32,7 @@ public class Dictionary {
 
     public Cursor dictionaryData(String matchString) {
         ArrayList<String> words = new ArrayList<String>();
-        Cursor data = database.rawQuery("Select * from eng2te where eng_word like '%" + matchString + "%'", null);
-//        while (data.moveToNext()) {
-//            words.add(data.getString(data.getColumnIndex("eng_word")));
-//        }
+        Cursor data = database.rawQuery("Select DISTINCT eng_word, rowid as _id from eng2te where eng_word like '" + matchString + "%'", null);
         return data;
     }
 

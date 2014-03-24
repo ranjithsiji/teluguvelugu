@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
@@ -101,8 +102,8 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
                 | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             public boolean onQueryTextChange(String newText) {
-                if (newText != null && newText.length() == 2) {
-//                    mSearchView.setSuggestionsAdapter(getCursorAdapter(newText));
+                if (newText != null && newText.length() >= 2) {
+                    mSearchView.setSuggestionsAdapter(getCursorAdapter(newText));
                 }
                 return false;
             }
@@ -134,18 +135,29 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 
     private CursorAdapter getCursorAdapter(String text) {
 
-        CursorAdapter cursorAdapter = new CursorAdapter(getApplicationContext(), dictionary.dictionaryData(text)) {
-            @Override
-            public View newView(Context context, Cursor cursor, ViewGroup parent) {
-                return null;
-            }
+        SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(getApplicationContext(),
+                android.R.layout.simple_list_item_1, dictionary.dictionaryData(text), new String[]{"eng_word"},
+                new int[]{android.R.id.text1}, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) {
 
             @Override
-            public void bindView(View view, Context context, Cursor cursor) {
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                final TextView text = (TextView) view.findViewById(android.R.id.text1);
+                text.setTextColor(Color.BLACK);
 
+
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSearchView.setQuery(text.getText(), true);
+
+                    }
+                });
+                return view;
             }
         };
         return cursorAdapter;
+
     }
 
     @Override
