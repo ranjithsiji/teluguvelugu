@@ -8,5 +8,10 @@
     <string name="recent">Recent</string>
     <string name="favourite">Favourites</string>
     <string name="aboutus">About Us</string>
-    
+    <string name="about">We are a personalized technology consulting firm specialized in building large scale web and
+        mobile applications using cutting edge technologies.\n \n
+        Helping clients build better software systems is the core of our business.Let us help you realize the next big
+        idea.
+    </string>
+
 </resources>

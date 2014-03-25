@@ -2,31 +2,22 @@ package com.ehc.teluguvelugu;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import android.app.Activity;
-import android.app.SearchManager;
-import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.*;
-import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 
 public class DictionaryActivity extends Activity implements View.OnClickListener {
     public static Date date = new Date();
     public static String today;
-    public static String query;
     public static SQLiteDatabase database;
     public static Typeface typeFacePothana;
     public static Typeface typeFaceOpenSans;
@@ -34,7 +25,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
     public String meaning;
     public String randomWord;
     public ImageButton favouriteButton;
-    public ArrayAdapter<String> adapter;
     public TextView pageTitleComponent;
     public TextView wordComponent;
     public TextView meaningOfWordComponent;
@@ -69,7 +59,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
         }
     }
 
-    // Getting query Of The Day
     public void showWordOfTheDay() {
         pageTitleComponent.setVisibility(View.VISIBLE);
         pageTitleComponent.setText("Word Of The Day");
@@ -99,7 +88,11 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
     private void setupSearchView(MenuItem searchItem) {
         searchItem.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM
                 | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchView.setOnQueryTextListener(getListener());
+    }
+
+    private SearchView.OnQueryTextListener getListener() {
+        return new SearchView.OnQueryTextListener() {
             public boolean onQueryTextChange(String newText) {
                 if (newText != null && newText.length() >= 2) {
                     mSearchView.setSuggestionsAdapter(getCursorAdapter(newText));
@@ -125,12 +118,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
                 return true;
             }
 
-            public boolean onClose() {
-//                mStatusView.setText("Closed!");
-                return false;
-            }
-
-        });
+        };
     }
 
     private CursorAdapter getCursorAdapter(String text) {
@@ -144,20 +132,16 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
                 View view = super.getView(position, convertView, parent);
                 final TextView text = (TextView) view.findViewById(android.R.id.text1);
                 text.setTextColor(Color.BLACK);
-
-
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mSearchView.setQuery(text.getText(), true);
-
                     }
                 });
                 return view;
             }
         };
         return cursorAdapter;
-
     }
 
     @Override
@@ -204,7 +188,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
             Iterator<String> recentWords = recents.iterator();
             while (recentWords.hasNext()) {
                 String nextWord = recentWords.next();
-                Log.d("values", nextWord + recents.size());
                 String word = nextWord + "\n" + dictionary.getMeaning(nextWord) + "\n\n";
                 meaningOfWordComponent.append(word);
             }
@@ -236,7 +219,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
     private void showAboutUs() {
         wordComponent.setVisibility(View.GONE);
         pageTitleComponent.setText("About Us");
-        String aboutus = "We are a personalized technology consulting firm specialized in building large scale web & mobile applications using cutting edge technologies.\n \n Helping clients build better software systems is the core of our business.Let us help you realize the next big idea.";
+        String aboutus = getResources().getString(R.string.about);
         meaningOfWordComponent.setText(aboutus);
     }
 
@@ -254,13 +237,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
         typeFaceOpenSans = Typeface.createFromAsset(assetmanager, "OpenSans_Semibold.ttf");
         meaningOfWordComponent.setTypeface(typeFacePothana);
         pageTitleComponent.setTypeface(typeFaceOpenSans);
-//        searchview = (AutoCompleteTextView) findViewById(R.id.searchView1);
-//        searchview
-//                .setAdapter(new ArrayAdapter<String>(this,
-//                        android.R.layout.simple_dropdown_item_1line, dictionary.dictionaryData()));
-//        searchview.setPadding(10, 0, 0, 0);
-//        searchview.setThreshold(1);
-//        searchview.setHint("English query");
     }
 
     private void renderWord(String query, String meaning) {
