@@ -224,6 +224,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 
     private void showAboutUs() {
         pageTitleComponent.setText("About Us");
+        favouriteButton.setVisibility(View.GONE);
         String aboutus = getResources().getString(R.string.about);
         meaningOfWordComponent.setText(aboutus);
     }
