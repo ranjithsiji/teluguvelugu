@@ -26,7 +26,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
     public String randomWord;
     public ImageButton favouriteButton;
     public TextView pageTitleComponent;
-    public TextView wordComponent;
     public TextView meaningOfWordComponent;
     public AssetManager assetmanager;
     public Context context;
@@ -63,7 +62,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
         pageTitleComponent.setVisibility(View.VISIBLE);
         pageTitleComponent.setText("Word Of The Day");
         favouriteButton.setVisibility(View.GONE);
-        wordComponent.setVisibility(View.GONE);
         meaningOfWordComponent.setText("");
         today = date.getDate() + "";
         String wordOfTheDay = dictionary.getWordOfTheDay(today);
@@ -94,7 +92,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
     private SearchView.OnQueryTextListener getListener() {
         return new SearchView.OnQueryTextListener() {
             public boolean onQueryTextChange(String newText) {
-                if (newText != null && newText.length() >= 2) {
+                if (newText != null && newText.length() >= 3) {
                     mSearchView.setSuggestionsAdapter(getCursorAdapter(newText));
                 }
                 return false;
@@ -168,7 +166,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
     }
 
     private void showRandom() {
-        wordComponent.setVisibility(View.GONE);
         randomWord = dictionary.getRandomWord();
         favouriteButton.setVisibility(View.GONE);
         pageTitleComponent.setVisibility(View.VISIBLE);
@@ -181,7 +178,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
         pageTitleComponent.setText("Recently Searched querys");
         favouriteButton.setVisibility(View.GONE);
         meaningOfWordComponent.setVisibility(View.VISIBLE);
-        wordComponent.setVisibility(View.GONE);
         meaningOfWordComponent.setText("");
         Set recents = dictionary.getRecentWords();
         if (recents != null) {
@@ -202,13 +198,12 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
         pageTitleComponent.setText("Your Favourites");
         favouriteButton.setVisibility(View.GONE);
         favourites = dictionary.getFavourites();
-        wordComponent.setVisibility(View.GONE);
         if (favourites != null) {
             Iterator<String> favouriteIterator = favourites.iterator();
             String viewFavouriteWords = "";
             while (favouriteIterator.hasNext()) {
                 String favouriteWord = favouriteIterator.next();
-                viewFavouriteWords = viewFavouriteWords + "\n\n" + favouriteWord + "\n" + dictionary.getMeaning(favouriteWord);
+                viewFavouriteWords = viewFavouriteWords + favouriteWord + "\n" + dictionary.getMeaning(favouriteWord) + "\n\n";
             }
             meaningOfWordComponent.setText(viewFavouriteWords);
         } else {
@@ -217,7 +212,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
     }
 
     private void showAboutUs() {
-        wordComponent.setVisibility(View.GONE);
         pageTitleComponent.setText("About Us");
         String aboutus = getResources().getString(R.string.about);
         meaningOfWordComponent.setText(aboutus);
@@ -229,7 +223,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
         favouriteButton.setVisibility(View.GONE);
         favouriteButton.setOnClickListener(this);
         meaningOfWordComponent = (TextView) findViewById(R.id.meaning);
-        wordComponent = (TextView) findViewById(R.id.word);
         meaningOfWordComponent.setMovementMethod(new ScrollingMovementMethod());
         context = getBaseContext();
         assetmanager = getAssets();
@@ -240,7 +233,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
     }
 
     private void renderWord(String query, String meaning) {
-        wordComponent.setText(query);
-        meaningOfWordComponent.setText(meaning);
+        meaningOfWordComponent.setText(query + "\n\n" + meaning);
     }
 }

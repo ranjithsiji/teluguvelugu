@@ -2,25 +2,25 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/holo_blue_light">
+        >
     <TextView
             android:id="@+id/page_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:fontFamily="OpenSans"
             android:gravity="center"
             android:layout_marginTop="8dp"
             android:textColor="@color/sysBlack"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:typeface="serif"/>
+            android:typeface="serif"
+            android:layout_alignParentTop="true"/>
 
     <TextView
             android:id="@+id/meaning"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="72dp"
             android:maxLines="25"
             android:padding="8dp"
             android:scrollbarAlwaysDrawVerticalTrack="true"
@@ -29,28 +29,17 @@
             android:textColor="@color/sysBlack"
             android:textSize="20sp"
             android:textStyle="normal"
-            android:typeface="sans"
-            android:layout_below="@+id/favourite"
-            android:layout_alignRight="@+id/favourite"/>
+            android:typeface="sans"/>
 
     <ImageButton
             android:id="@+id/favourite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="72dp"
-            android:scrollbars="vertical"
-            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:layout_marginTop="16dp"
             android:src="@android:drawable/btn_star"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"/>
-
-    <TextView
-            android:id="@+id/word"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:layout_below="@+id/favourite"
-            android:layout_alignParentLeft="true"/>
 
 
 </RelativeLayout>
