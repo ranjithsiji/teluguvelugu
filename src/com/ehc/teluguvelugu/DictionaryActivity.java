@@ -53,15 +53,26 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
     public void onClick(View mainView) {
         switch (mainView.getId()) {
             case R.id.favourite:
-                dictionary.storeFavouriteWord(mSearchView.getQuery().toString());
+//                dictionary.storeFavouriteWord(mSearchView.getQuery().toString());
+                dictionary.storeFavouriteWord(pickWordFromView());
                 break;
         }
+    }
+
+
+    private String pickWordFromView() {
+        String content = meaningOfWordComponent.getText().toString();
+        String[] splitString = content.split("\n");
+        if (splitString.length != 0) {
+            return splitString[0];
+        }
+        return "";
     }
 
     public void showWordOfTheDay() {
         pageTitleComponent.setVisibility(View.VISIBLE);
         pageTitleComponent.setText("Word Of The Day");
-        favouriteButton.setVisibility(View.GONE);
+        favouriteButton.setVisibility(View.VISIBLE);
         meaningOfWordComponent.setText("");
         today = date.getDate() + "";
         String wordOfTheDay = dictionary.getWordOfTheDay(today);
@@ -167,7 +178,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
 
     private void showRandom() {
         randomWord = dictionary.getRandomWord();
-        favouriteButton.setVisibility(View.GONE);
+        favouriteButton.setVisibility(View.VISIBLE);
         pageTitleComponent.setVisibility(View.VISIBLE);
         pageTitleComponent.setText("Random Word");
         meaningOfWordComponent.setText(randomWord + "\n\n" + dictionary.getMeaning(randomWord));
