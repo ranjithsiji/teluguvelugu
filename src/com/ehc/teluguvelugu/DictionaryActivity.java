@@ -53,7 +53,6 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
     public void onClick(View mainView) {
         switch (mainView.getId()) {
             case R.id.favourite:
-//                dictionary.storeFavouriteWord(mSearchView.getQuery().toString());
                 dictionary.storeFavouriteWord(pickWordFromView());
                 break;
         }
@@ -139,8 +138,9 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
+                view.setBackgroundColor(R.color.sysWhite);
                 final TextView text = (TextView) view.findViewById(android.R.id.text1);
-                text.setTextColor(Color.BLACK);
+                text.setTextColor(Color.WHITE);
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
