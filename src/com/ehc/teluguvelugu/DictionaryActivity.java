@@ -60,12 +60,11 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
     }
 
 
-    // Giving Functionality to Search Button
     @Override
     public void onClick(View mainView) {
         switch (mainView.getId()) {
             case R.id.favourite:
-//                dictionary.storeFavouriteWord(searchview.getText().toString());
+                dictionary.storeFavouriteWord(mSearchView.getQuery().toString());
                 break;
         }
     }
@@ -119,6 +118,7 @@ public class DictionaryActivity extends Activity implements View.OnClickListener
                         renderWord(query, meaning);
                         dictionary.storeRecentWord(query);
                     } else {
+                        favouriteButton.setVisibility(View.GONE);
                         meaningOfWordComponent.setText("Sorry! Couldn't find meaning");
                     }
                 }
